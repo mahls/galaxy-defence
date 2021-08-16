@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galaxy Defence</title>
+    <script src='space3.js' defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css" integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk" crossorigin="anonymous">
+</head>
+<body>
+
+    <div class="container">
+
+    <h1 class='title'>Galaxy Defence</h1>
+
+    <div class="info">
+        <div class="score" id='score'>Score: 0000</div>
+        <div class="level" id='level'>Level 1</div>
+        <div class="time">Time: 00:00</div>
+
+
+        <div class="settings" id='menudiv' onClick='showMenu()'>Menu
+            <i class="far fa-caret-square-down"></i>
+        </div>
+
+    </div>
+
+    <div class="menu" id='menu'>
+        <div class="highscore">Highscores</div>
+        <div class="test1">Brightness</div>
+        <div class="test2">Music</div>
+    </div>
+
+    <div class="tostart">
+        <p>Press any key to begin</p>
+    </div>
+
+    <canvas 
+    id="myCanvas" 
+    width="600" height="600" 
+    style="border:3px solid #040404; background-color: rgb(24, 24, 24);
+    border-radius: 2px; -moz-box-shadow: 0 0 3px rgb(70, 70, 70);
+    -webkit-box-shadow: 0 0 3px rgb(56, 56, 56);
+    box-shadow: 0 0 3px rgb(41, 41, 41);">
+    </canvas>
+
+    </div>
+    
+</body>
+
+<style>
+    
+    *{font-family: Verdana, Geneva, Tahoma, sans-serif}
+    body{background-image: url('skycity.jpg');}
+
+    .b{
+        cursor: pointer
+    }
+
+    .title{
+        font-family: 'Orbitron', sans-serif;
+        text-shadow: 0 rgb(255, 255, 255), 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    }
+
+    .beam{ 
+        height: 25px; width: 15px;
+    }
+
+    .settings{
+        cursor: pointer;border-radius: 2px;
+    }
+
+    .settings:hover{
+         background-color: grey;
+    }
+
+    .tostart{
+        background: transparent; 
+        color: rgb(247, 247, 247);
+        font-size: 25px; 
+        position: absolute; 
+        top: 265px; 
+        display: none;
+    }
+
+    .container{
+        width: 100%;
+        height: 100%;
+        display: flex; 
+        align-items: center; 
+        justify-content: space-between;
+        flex-direction: column
+    }
+
+    .info{
+        background-color: #040404;
+        color: white;
+        width: 596px;
+        display: flex; 
+        justify-content:space-between;
+        padding: 5px;
+        border-radius: 2px;
+    }
+
+    .menu{
+        display: none;
+        justify-content: space-between;
+        width: 595px;
+        position: absolute;
+        top: 115px;
+        background-color: rgb(0, 0, 0);
+        padding: 5px 5px 5px 5px;
+        color: white;
+        transition: 0.5s;
+    }
+
+    .menushow{
+        display: flex;
+        border: 1px solid white;
+    }
+
+    .highscore:hover{
+       cursor: pointer
+    }
+    .test1:hover{
+       cursor: pointer
+    }
+    .test2:hover{
+        cursor: pointer
+    }
+    
+</style>
+
+
+</html>
