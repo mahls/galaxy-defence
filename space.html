@@ -20,7 +20,7 @@
     <div class="info">
         <div class="score" id='score'>Score: 0000</div>
         <div class="level" id='level'>Level 1</div>
-        <div class="time">Time: 00:00</div>
+        <div class="time" id="time">Time: 00:00</div>
 
 
         <div class="settings" id='menudiv' onClick='showMenu()'>Menu
@@ -134,6 +134,36 @@
     }
     
 </style>
+
+
+<script>
+    function startTimer() {
+        var timer = document.getElementById('time');
+        var seconds = 0;
+        var minutes = 0;
+        
+        setInterval(function() {
+            seconds++;
+            if (seconds >= 60) {
+                seconds = 0;
+                minutes++;
+            }
+            var formattedTime = pad(minutes) + ':' + pad(seconds);
+            timer.textContent = 'Time: ' + formattedTime;
+        }, 1000);
+    }
+
+    function pad(val) {
+        var valString = val + "";
+        if (valString.length < 2) {
+            return "0" + valString;
+        } else {
+            return valString;
+        }
+    }
+
+    startTimer();
+</script>
 
 
 </html>

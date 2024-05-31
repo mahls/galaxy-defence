@@ -1,15 +1,20 @@
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
-var isSpacebarPressed = false; 
-var isKeyUpPressed = false;
-var isKeyDownPressed = false;
-var isKeyLeftPressed = false;
-var isKeyRightPressed = false;
-var isGameStarted = false;
-var level = 1;
-var lastBulletTime = 0; // Time since the last bullet was fired
-var bulletCooldown = 500; 
-var level2 = false;
+let isSpacebarPressed = false; 
+let isKeyUpPressed = false;
+let isKeyDownPressed = false;
+let isKeyLeftPressed = false;
+let isKeyRightPressed = false;
+let isGameStarted = false;
+let level = 1;
+let lastBulletTime = 0; // Time since the last bullet was fired
+let bulletCooldown = 500; 
+let level2 = false;
+let level3 = false;
+let currentScore = 0;
+let spawnAlien3 = false;
+let timer = 0;
+
 
 function drawBackground(){      
     // ctx.rect(0, 0, 600, 600);
@@ -40,7 +45,7 @@ function Alien(paramPosX, paramPosY) {
     this.posX = paramPosX;
     this.posY = paramPosY;
     this.velocity = 5;
-    this.hits = 0; // Track the number of hits
+    this.hits = 0; // Track the num`ber of hits
     
     this.drawAlien = function() {
         var alien1 = new Image();
@@ -82,8 +87,33 @@ function Alien2(paramPosX, paramPosY) {
     }
 }
 
+function Alien3(paramPosX, paramPosY) {
+    this.posX = paramPosX;
+    this.posY = paramPosY;
+    this.velocity = 15; // Assuming a different velocity for Alien3
+    this.hits = 0; // Track the number of hits
+    
+    this.drawAlien3 = function() {
+        var alien3 = new Image();
+        alien3.src = 'alien3.png';
+        ctx.drawImage(alien3, this.posX, this.posY, 43, 43);
+    }
+
+    this.moveAlien = function() {
+        this.posX += this.velocity;
+        if (this.posX >= 550) { this.velocity = -5; }
+        if (this.posX <= 50) { this.velocity = 5; }
+    }
+
+    this.moveDown = function() {
+        this.posY += 0.5;
+    }
+}
+
 
 function initLevelOne() {
+    level = 1; // Set the level to 1
+    document.getElementById('level').textContent = 'Level ' + level; // Update the level display
     let vectorY = 25;
     let isStartLeft = true; // Flag to track starting position
     
@@ -101,7 +131,7 @@ function initLevelOne() {
         levelOneArr.push(alien);
         
         // Check if all aliens are created
-        if (levelOneArr.length < 10) { // Number of aliens you want to create
+        if (levelOneArr.length < 5) { // Number of aliens you want to create
             setTimeout(createAlien, 500); // 500 milliseconds = 0.5 seconds
         }
     }
@@ -110,6 +140,8 @@ function initLevelOne() {
 }
 
 function initLevelTwo() {
+    level = 2; // Set the level to 2
+    document.getElementById('level').textContent = 'Level ' + level; // Update the level display
     level2 = true;
     levelOneArr = []; // Clear existing aliens from Level 1
     let vectorY = 25;
@@ -156,6 +188,37 @@ function initLevelTwo() {
     createAlien();
     createAlien2(); // Call createAlien2 to create instances of Alien2
 }
+
+function initLevelThree() {
+    level = 3; // Set the level to 3
+    document.getElementById('level').textContent = 'Level ' + level; // Update the level display
+    level3 = true;
+    levelOneArr = []; // Clear existing aliens from previous levels
+    let vectorY = 25;
+    let isStartLeft = true;
+
+    function createAlien3() {
+        let vectorX;
+        if (isStartLeft) {
+            vectorX = 50;
+            isStartLeft = false;
+        } else {
+            vectorX = 500; // Adjust this value based on canvas width
+            isStartLeft = true;
+        }
+        
+        var alien3 = new Alien3(vectorX, vectorY); // Create instance of Alien3
+        levelOneArr.push(alien3); // Push Alien3 instance into levelOneArr
+        
+        // Check if all aliens are created
+        if (levelOneArr.length < 18) { // Number of aliens you want to create
+            setTimeout(createAlien3, 500); // 500 milliseconds = 0.5 seconds
+        }
+    }
+
+    createAlien3(); // Start creating Alien3 instances
+}
+
 
 
 function BlueBeam(paramPosX, paramPosY, angle) {
@@ -246,6 +309,13 @@ function shootBullets() {
 
 let bulletArr = [];
 
+function handleScore(increment) {
+    currentScore += increment; // Increment the score by the passed value
+    var scoreElement = document.getElementById('score'); // Get the score element
+    scoreElement.textContent = 'Score: ' + currentScore.toString().padStart(4, '0'); // Update the score display
+}
+
+
 function keyDownEvent(e){
 
     //up
@@ -320,41 +390,46 @@ function checkCollisionWithShip() {
     return false; // No collision detected
 }
     
-function gameloop(){
+function gameloop() {
     var currentTime = Date.now();
+
+    timer += 30; // Increment timer by 30 milliseconds
 
     drawBackground();
 
     if (checkCollisionWithShip()) {
         // Game over condition: Ship collided with an alien
-        console.log("Game over! Ship collided with an alien.");
+        alert("Game over! Ship collided with an alien.");
         return; // Exit the game loop
     }
 
     if (levelOneArr.length === 0 && !isGameStarted) {
         console.log("Level 2 Started");
         isGameStarted = true; // Prevent reinitialization if already started
-        initLevelTwo();
-         // Initialize two
+        initLevelTwo(); // Initialize level 2
     }
 
+    if (levelOneArr.length === 0 && level === 2 && !level3) {
+        console.log("Level 3 Started");
+        initLevelThree(); // Initialize level 3
+    }
 
-    if(isKeyUpPressed == true){
+    if (isKeyUpPressed == true) {
         shipObj.posY -= 20;
     }
-    if(isKeyDownPressed == true){
+    if (isKeyDownPressed == true) {
         shipObj.posY += 20;
     }
-    if(isKeyLeftPressed == true){
+    if (isKeyLeftPressed == true) {
         shipObj.posX -= 20;
     }
-    if(isKeyRightPressed == true){
+    if (isKeyRightPressed == true) {
         shipObj.posX += 20;
     }
-    
+
     shipObj.drawShip();
 
-    for(var i = 0; i < bulletArr.length; i++){
+    for (var i = 0; i < bulletArr.length; i++) {
         var bullet = bulletArr[i];
         bullet.move();
         bullet.draw();
@@ -363,34 +438,47 @@ function gameloop(){
     levelOneArr.forEach((alien, index) => {
         if (alien instanceof Alien) {
             alien.drawAlien();
+            alien.moveAlien(); // Call moveAlien for Alien objects
+            alien.moveDown(); // Call moveDown for all aliens
         } else if (alien instanceof Alien2) {
             alien.drawAlien2();
+            alien.moveAlien(); // Call moveAlien for Alien2 objects
+            alien.moveDown(); // Call moveDown for all aliens
         }
-        alien.moveAlien();
-        alien.moveDown();
+    });
 
-// Check for collision with each bullet
+    // Check for collision with each bullet
     bulletArr.forEach((bullet, bulletIndex) => {
-    levelOneArr.forEach((alien, alienIndex) => {
-        if (bullet.posX < alien.posX + 43 && bullet.posX + 20 > alien.posX &&
-            bullet.posY < alien.posY + 43 && bullet.posY + 30 > alien.posY) {
-            // Decrease the hits of the alien
-            alien.hits++;
-            // Remove the bullet
-            bulletArr.splice(bulletIndex, 1);
-            // Check if the alien has been hit 3 times
-            if (alien.hits >= 3) {
-                // Remove the alien
-                levelOneArr.splice(alienIndex, 1);
+        levelOneArr.forEach((alien, alienIndex) => {
+            if (
+                bullet.posX < alien.posX + 43 &&
+                bullet.posX + 20 > alien.posX &&
+                bullet.posY < alien.posY + 43 &&
+                bullet.posY + 30 > alien.posY
+            ) {
+                // Decrease the hits of the alien
+                alien.hits++;
+                // Remove the bullet
+                bulletArr.splice(bulletIndex, 1);
+                // Check if the alien has been hit 3 times
+                if (alien.hits >= 3) {
+                    // Remove the alien
+                    levelOneArr.splice(alienIndex, 1);
+                    handleScore(100); // Adjust the score increment as needed
+                }
             }
-        }
+        });
     });
-    });
-    });
+
+    // Check if all aliens are defeated in level 2
+    if (levelOneArr.length === 0 && level === 2 && !level3) {
+        console.log("Level 3 Started");
+        initLevelThree(); // Initialize level 3
+    }
 
     setTimeout(gameloop, 30);
-    
-};
+}
+
 
 initLevelOne();
 gameloop();
